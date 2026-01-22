@@ -1,6 +1,6 @@
 # Direct MVI
 
-![version](https://img.shields.io/badge/version-0.0.1-blue.svg)
+![version](https://img.shields.io/badge/version-0.1.0-blue.svg)
 ![language](https://img.shields.io/badge/language-Kotlin-purple.svg)
 ![platform](https://img.shields.io/badge/platform-Android%20%7C%20Core-green.svg)
 ![license](https://img.shields.io/badge/license-Apache%202.0-orange.svg)
