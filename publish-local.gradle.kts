@@ -1,6 +1,6 @@
 apply(plugin = "maven-publish")
 
-val groupIdVal = "com.nikol.direct"
+val groupIdVal = "directt"
 val versionVal = "0.1.0"
 
 afterEvaluate {

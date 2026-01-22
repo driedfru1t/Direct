@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nikol.direct_compose
+package direct.direct_compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,9 +23,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.nikol.direct_android.DirectViewModel
-import com.nikol.direct_core.DirectEffect
-import com.nikol.direct_core.DirectState
+import direct.direct_android.DirectViewModel
+import direct.direct_core.DirectEffect
+import direct.direct_core.DirectState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

@@ -22,7 +22,7 @@ plugins {
 }
 
 android {
-    namespace = "com.nikol.direct_compose"
+    namespace = "direct"
     compileSdk {
         version = release(36)
     }

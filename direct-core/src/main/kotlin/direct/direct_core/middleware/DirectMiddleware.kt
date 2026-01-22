@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.nikol.direct_core.middleware
+package direct.direct_core.middleware
 
-import com.nikol.direct_core.DirectEffect
-import com.nikol.direct_core.DirectIntent
-import com.nikol.direct_core.DirectState
+import direct.direct_core.DirectEffect
+import direct.direct_core.DirectIntent
+import direct.direct_core.DirectState
 
 /**
  * Interface for Store Middleware (Interceptors).

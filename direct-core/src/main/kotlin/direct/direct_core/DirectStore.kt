@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.nikol.direct_core
+package direct.direct_core
 
-import com.nikol.direct_core.middleware.DirectMiddleware
+import direct.direct_core.middleware.DirectMiddleware
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow

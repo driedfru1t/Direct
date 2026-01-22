@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.nikol.direct_android
+package direct.direct_android
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nikol.direct_core.DirectEffect
-import com.nikol.direct_core.DirectIntent
-import com.nikol.direct_core.DirectState
-import com.nikol.direct_core.DirectStore
-import com.nikol.direct_core.IntentBuilder
+import direct.direct_core.DirectEffect
+import direct.direct_core.DirectIntent
+import direct.direct_core.DirectState
+import direct.direct_core.DirectStore
+import direct.direct_core.IntentBuilder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 

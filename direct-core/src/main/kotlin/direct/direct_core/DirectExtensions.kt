@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nikol.direct_core
+package direct.direct_core
 
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nikol.direct_core
+package direct.direct_core
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.nikol.direct_android.middleware
+package direct.direct_android.middleware
 
 import android.util.Log
-import com.nikol.direct_core.DirectEffect
-import com.nikol.direct_core.DirectIntent
-import com.nikol.direct_core.DirectState
-import com.nikol.direct_core.middleware.DirectMiddleware
+import direct.direct_core.DirectEffect
+import direct.direct_core.DirectIntent
+import direct.direct_core.DirectState
+import direct.direct_core.middleware.DirectMiddleware
 
 /**
  * A ready-to-use Middleware implementation that logs all Store events to the Android Logcat.
