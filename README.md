@@ -41,9 +41,9 @@ dependencyResolutionManagement {
 dependencies {
     val directVersion = "0.1.0"
 
-    implementation("com.nikol.direct:direct-core:$directVersion")
-    implementation("com.nikol.direct:direct-android:$directVersion")
-    implementation("com.nikol.direct:direct-compose:$directVersion")
+    implementation("com.github.driedfru1t.Direct:direct-core:$directVersion")
+    implementation("com.github.driedfru1t.Direct:direct-android:$directVersion")
+    implementation("com.github.driedfru1t.Direct:direct-compose:$directVersion")
 }
 ```
 
