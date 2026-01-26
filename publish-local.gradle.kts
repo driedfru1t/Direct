@@ -1,7 +1,7 @@
 apply(plugin = "maven-publish")
 
-val groupIdVal = "directt"
-val versionVal = "0.1.0"
+val groupIdVal = "direct"
+val versionVal = "0.2.0-alpha"
 
 afterEvaluate {
     configure<PublishingExtension> {

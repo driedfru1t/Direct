@@ -18,6 +18,7 @@ package direct.direct_core
 
 import direct.direct_core.middleware.DirectMiddleware
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,9 +27,11 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -166,4 +169,16 @@ abstract class DirectStore<INTENT : DirectIntent, STATE : DirectState, EFFECT : 
             handleIntents()
         }
     }
+}
+
+suspend inline fun <reified S : DirectState> DirectStore<*, S, *>.awaitState(
+    timeoutMillis: Long = 5_000L,
+    crossinline predicate: (S) -> Boolean
+): Boolean = try {
+    withTimeout(timeoutMillis) {
+        uiState.first { predicate(it) }
+        true
+    }
+} catch (_: TimeoutCancellationException) {
+    false
 }
