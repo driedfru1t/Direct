@@ -42,7 +42,7 @@ abstract class DirectViewModel<INTENT : DirectIntent, STATE : DirectState, EFFEC
 
     // Internal Store instance (Composition/Delegation pattern)
     // Delegates logic to the platform-agnostic DirectStore, binding it to the Android viewModelScope.
-    private val store = object : DirectStore<INTENT, STATE, EFFECT>(viewModelScope) {
+    protected val store = object : DirectStore<INTENT, STATE, EFFECT>(viewModelScope) {
         override fun createInitialState() = this@DirectViewModel.createInitialState()
         override fun handleIntents() = this@DirectViewModel.handleIntents()
     }
