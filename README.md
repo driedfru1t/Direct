@@ -31,7 +31,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    val directVersion = "0.1.0"
+    val directVersion = "0.2.1"
 
     // Основная логика
     implementation("com.github.driedfru1t.Direct:direct-core:$directVersion")
