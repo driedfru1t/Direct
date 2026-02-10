@@ -5,7 +5,7 @@
 ![platform](https://img.shields.io/badge/platform-Android%20%7C%20Core-green.svg)
 ![license](https://img.shields.io/badge/license-Apache%202.0-orange.svg)
 
-**Direct** — это MVI библиотека для Kotlin и Android.
+**Direct** — это MVI библиотека для Kotlin. Поддерживает kmp, а именно android, iosX64, iosArm64, iosSimulatorArm64, jvm и js таргеты.
 
 С помощью библиотеки можно декларивно описывать ваши намерения и выбрать ту политику обработки, которая больше всего подходит.
 
@@ -36,11 +36,8 @@ dependencies {
     // Основная логика
     implementation("com.github.driedfru1t.Direct:direct-core:$directVersion")
     
-    // ViewModel и Lifecycle (для Android) автоматичеки тянет за собой и direct-core
-    implementation("com.github.driedfru1t.Direct:direct-android:$directVersion")
-    
-    // Утилиты для Jetpack Compose
-    implementation("com.github.driedfru1t.Direct:direct-compose:$directVersion")
+    // ViewModel автоматичеки тянет за собой и direct-core
+    implementation("com.github.driedfru1t.Direct:direct-viewModel:$directVersion")
 }
 ```
 
@@ -95,6 +92,16 @@ class HomeViewModel(
     }
 }
 ```
+
+### 3. Подписываемся на изминения стэйта
+```kotlin
+@Composable
+fun AnotherScreen(){
+    val viewModel = ... //получаете любыми способами viewModel
+    val state by viewModel.state.collectAsStateWithLifecycle() // далее получаем стэйт
+}
+```
+
 Вот пока все доступные функции для описания интентов без какой либо сложной настройки.
 ```kotlin
 on<Intent>{  } 
@@ -182,6 +189,68 @@ class LogMiddleware(val tag: String) : DirectMiddleware<Any, Any, Any> {
 // Подключаем одной строчкой
 override fun handleIntents() = intents {
     install(LogMiddleware("HomeVM"))
+}
+```
+
+## Inline feature store
+Можно создать отдельный независимы стор и переиспользовать его. Для этого в блоке `intents`(для viewModel) или `runDsl`(если напрямую наследоваться от DirectStore) нужно испольщовать функцию `feature`. В ней вы указываете ваш стор и прописываете все контракты между вашим стором и подключаемым.
+
+**1. Надо описать внедряемый стор**
+
+Встраиваем ы стор ничего не знает о своём родителе и полностью самостоятелен
+```kotlin
+// Фича "Список новостей"
+class NewsStore(scope: CoroutineScope) : DirectStore<NewsIntent, NewsState, NewsEffect>(scope) {
+    override fun createInitialState() = NewsState()
+    override fun handleIntents() = runDsl {
+        onLatest<NewsIntent.Load> { /* логика загрузки */ }
+    }
+}
+```
+**2. Интрегрируем в родительский стор или ViewModel**
+
+Родитель содердит ребёнка и и пробрасывает ему интенты
+```kotlin
+class HomeViewModel(private val newsStore: NewsStore) : DirectViewModel<HomeIntent, HomeState, HomeEffect>() {
+
+    override fun createInitialState() = HomeState(
+        news = newsStore.createInitialState() // Инициализируем вложенный стейт
+    )
+
+    override fun handleIntents() = intents {
+        
+        // Монтируем дочернюю фичу
+        feature(
+            store = newsStore,
+            // 1. Синхронизация: когда у ребенка меняется стейт, обновляем свой
+            state = { childState -> 
+                setState { copy(news = childState) } 
+            },
+            // 2. Эффекты: слушаем ошибки или события навигации ребенка
+            effects = { childEffect ->
+                if (childEffect is NewsEffect.Error) setEffect { HomeEffect.ShowToast }
+            },
+            // 3. Маршрутизация: пересылаем нужные интенты ребенку
+            intents = { parentIntent ->
+                when (parentIntent) {
+                    is HomeIntent.RefreshAll -> NewsIntent.Load
+                    is HomeIntent.NewsAction -> parentIntent.innerIntent
+                    else -> null
+                }
+            }
+        )
+    }
+}
+```
+
+**Совет**
+
+Для того чтобы можно было пробрасывать удобно интенты между родительским стором и дочерним можно создать интент обёртку
+```kotlin
+sealed interface ChildIntent : DirectIntent
+
+sealed interface ParentIntent : DirectIntent {
+    data class Wrapper(val intent: ChildIntent) : ParentIntent
 }
 ```
 

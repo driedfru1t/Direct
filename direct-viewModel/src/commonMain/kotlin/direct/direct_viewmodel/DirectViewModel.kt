@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package direct.direct_android
+package direct.direct_viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -40,9 +40,7 @@ import kotlinx.coroutines.flow.StateFlow
 abstract class DirectViewModel<INTENT : DirectIntent, STATE : DirectState, EFFECT : DirectEffect> :
     ViewModel() {
 
-    // Internal Store instance (Composition/Delegation pattern)
-    // Delegates logic to the platform-agnostic DirectStore, binding it to the Android viewModelScope.
-    private val store = object : DirectStore<INTENT, STATE, EFFECT>(viewModelScope) {
+    protected val store = object : DirectStore<INTENT, STATE, EFFECT>(viewModelScope) {
         override fun createInitialState() = this@DirectViewModel.createInitialState()
         override fun handleIntents() = this@DirectViewModel.handleIntents()
     }
@@ -53,7 +51,7 @@ abstract class DirectViewModel<INTENT : DirectIntent, STATE : DirectState, EFFEC
      * Exposes the current UI state as a [StateFlow].
      * This flow is lifecycle-aware and always holds the latest state value.
      */
-    val uiState: StateFlow<STATE> get() = store.uiState
+    val state: StateFlow<STATE> get() = store.state
 
     /**
      * Exposes the stream of one-off side effects (e.g., Navigation, Toasts).

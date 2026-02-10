@@ -18,6 +18,7 @@ package direct.direct_core
 
 import direct.direct_core.middleware.DirectMiddleware
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,10 +27,14 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicBoolean
+import kotlinx.coroutines.withTimeout
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+
 
 /**
  * The core engine of the Direct MVI architecture.
@@ -46,12 +51,13 @@ import java.util.concurrent.atomic.AtomicBoolean
 abstract class DirectStore<INTENT : DirectIntent, STATE : DirectState, EFFECT : DirectEffect>(
     protected val scope: CoroutineScope
 ) {
+    @OptIn(ExperimentalAtomicApi::class)
     private val isInitialized = AtomicBoolean(false)
     private val activeMiddlewares = mutableListOf<DirectMiddleware<INTENT, STATE, EFFECT>>()
 
     // --- State Management ---
 
-    private val _uiState: MutableStateFlow<STATE> by lazy {
+    private val _state: MutableStateFlow<STATE> by lazy {
         MutableStateFlow(createInitialState())
     }
 
@@ -60,9 +66,9 @@ abstract class DirectStore<INTENT : DirectIntent, STATE : DirectState, EFFECT : 
      * It always has a value and retains the last emitted state for new collectors.
      * Thread-safe and lifecycle-aware (when collected properly).
      */
-    val uiState: StateFlow<STATE> by lazy {
+    val state: StateFlow<STATE> by lazy {
         ensureInitialized()
-        _uiState.asStateFlow()
+        _state.asStateFlow()
     }
 
     // --- Effect Management ---
@@ -92,7 +98,7 @@ abstract class DirectStore<INTENT : DirectIntent, STATE : DirectState, EFFECT : 
 
     /**
      * Creates the initial state of the store.
-     * This method is called lazily when [uiState] is accessed for the first time.
+     * This method is called lazily when [state] is accessed for the first time.
      */
     protected abstract fun createInitialState(): STATE
 
@@ -138,7 +144,7 @@ abstract class DirectStore<INTENT : DirectIntent, STATE : DirectState, EFFECT : 
      * @param reducer A lambda that takes the current state and returns the new state.
      */
     fun dispatchState(reducer: STATE.() -> STATE) {
-        _uiState.update { old ->
+        _state.update { old ->
             val new = old.reducer()
             if (old != new) {
                 activeMiddlewares.forEach { it.onStateChanged(old, new) }
@@ -161,8 +167,9 @@ abstract class DirectStore<INTENT : DirectIntent, STATE : DirectState, EFFECT : 
 
     // --- Internal Helpers ---
 
+    @OptIn(ExperimentalAtomicApi::class)
     private fun ensureInitialized() {
-        if (isInitialized.compareAndSet(false, true)) {
+        if (isInitialized.compareAndSet(expectedValue = false, newValue = true)) {
             handleIntents()
         }
     }

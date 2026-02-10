@@ -24,7 +24,7 @@ import direct.direct_core.DirectState
  * Interface for Store Middleware (Interceptors).
  *
  * Middleware provides a mechanism to hook into the lifecycle of the Store.
- * It allows observing and intercepting [DirectIntent]s, [DirectState] changes, and [DirectEffect]s
+ * It allows observing and intercepting [direct.direct_core.DirectIntent]s, [direct.direct_core.DirectState] changes, and [direct.direct_core.DirectEffect]s
  * without modifying the core business logic.
  *
  * Common use cases include:

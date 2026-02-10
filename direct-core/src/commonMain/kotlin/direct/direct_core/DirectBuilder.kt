@@ -19,6 +19,7 @@ package direct.direct_core
 import direct.direct_core.middleware.DirectMiddleware
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.launch
 
 /**
  * DSL marker used to restrict the scope of receivers in the Direct DSL.
@@ -94,5 +95,35 @@ class IntentBuilder<INTENT : DirectIntent, STATE : DirectState, EFFECT : DirectE
     ) {
         val builder = HandlerBuilder<T>().apply(configure)
         handlers.add(builder.build(source))
+    }
+
+    fun <CI : DirectIntent, CS : DirectState, CE : DirectEffect> feature(
+        store: DirectStore<CI, CS, CE>,
+        state: (CS) -> Unit,
+        effects: suspend (CE) -> Unit = { },
+        intents: (INTENT) -> CI?
+    ) {
+
+
+        handlers.add { scope ->
+            scope.launch {
+                store.state.collect { childState ->
+                    state(childState)
+                }
+            }
+            scope.launch {
+                store.effect.collect { childEffect ->
+                    effects(childEffect)
+                }
+            }
+            scope.launch {
+                upstream.collect { parentIntent ->
+                    val child = intents(parentIntent)
+                    child?.let { childIntent ->
+                        store.dispatch(childIntent)
+                    }
+                }
+            }
+        }
     }
 }

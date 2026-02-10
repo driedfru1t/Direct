@@ -24,16 +24,17 @@ plugins {
     alias(libs.plugins.android.lint)
 }
 
+
 kotlin {
     jvmToolchain(17)
     withSourcesJar()
     androidLibrary {
-        namespace = "direct.direct_core"
+        namespace = "direct.direct_viewmodel"
         compileSdk = 36
         minSdk = 24
     }
 
-    val xcfName = "direct-coreKit"
+    val xcfName = "direct-viewModelKit"
     listOf(
         iosX64(), iosArm64(), iosSimulatorArm64()
     ).forEach { iosTarget ->
@@ -54,7 +55,8 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
-                implementation(libs.kotlinx.coroutines.core)
+                api(projects.directCore)
+                implementation(libs.androidx.lifecycle.viewmodel)
             }
         }
     }
