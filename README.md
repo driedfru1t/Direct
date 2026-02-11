@@ -1,8 +1,12 @@
+<p align="center">
+  <img src="media/logo.png" width="250" />
+</p>
+
 # Direct MVI
 
-![version](https://img.shields.io/badge/version-0.1.0-blue.svg)
+![version](https://img.shields.io/badge/version-0.2.1-blue.svg)
 ![language](https://img.shields.io/badge/language-Kotlin-purple.svg)
-![platform](https://img.shields.io/badge/platform-Android%20%7C%20Core-green.svg)
+![platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20Desktop-green.svg)
 ![license](https://img.shields.io/badge/license-Apache%202.0-orange.svg)
 
 **Direct** — это MVI библиотека для Kotlin. Поддерживает kmp, а именно android, iosX64, iosArm64, iosSimulatorArm64, jvm и js таргеты.
